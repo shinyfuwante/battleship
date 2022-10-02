@@ -1,12 +1,11 @@
 const shipFactory = (length) => ({
     length,
-    hurtbox: [],
+    damage: 0,
     isSunk () {
-        return this.hurtbox.length === length;
+        return this.damage === length;
     },
-    hit (index) {
-        if (this.hurtbox.includes(index)) return;
-        this.hurtbox.push(index);
+    hit () {
+        this.damage += 1;
     }
   })
 
