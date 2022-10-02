@@ -1,16 +1,5 @@
 import gameboard from "../modules/gameboard";
-
-// mocking ship factory function in case the implementation changes from actual shipFactory.
-const shipFactory = jest.fn(x => ({ 
-    length: x,
-    hurtbox: [],
-    isSunk () {
-        return this.hurtbox.length === this.length;
-    },
-    hit (index) {
-        this.hurtbox.push(index)
-    },
-}));
+import shipFactory from "../modules/shipFactory";
 
 // this test is probably not needed and it gets tested extensively through the use of other tests
 test("Test that the gameboard is created with a 7x7", () => {
@@ -57,7 +46,7 @@ test("Test that the gameboard will place a ship while other ships are on the boa
     const board = gameboard();
 
     // place a vertical ship with length of 4 at the exact center of the board
-    expect(board.placeShip(shipFactory(4), 3, 3, true)).toBe(true);
+    board.placeShip(shipFactory(4), 3, 3, true);
 
     // try to place a ship on the top left
     expect(board.placeShip(shipFactory(2), 0, 0, true)).toBe(true);
@@ -75,4 +64,59 @@ test("Test that the gameboard will not place a ship if it were to collide with a
     expect(board.placeShip(shipFactory(3), 3, 1, false)).toBe(false);
     // try to place a ship of length 2 vertically 1 cell above
     expect(board.placeShip(shipFactory(2), 2, 3, true)).toBe(false);
+})
+
+// Tests to exercise receiveAttack();
+
+test("Test receiveAttack cannot be repeated on the same cell", () => {
+    const board = gameboard();
+    board.placeShip(shipFactory(2), 0, 0, true);
+
+    expect(board.receiveAttack(3,3)).toBe(true);
+    expect(board.receiveAttack(3,3)).toBe(false);
+})
+
+test("Test receiveAttack can hit a ship", () => {
+    const board = gameboard();
+    const ship = shipFactory(2);
+    board.placeShip(ship, 0, 0, true);
+    board.receiveAttack(0,0);
+    expect(ship.damage).toBe(1);
+})
+
+test("Test receiveAttack can sink a ship", () => {
+    const board = gameboard();
+    const ship = shipFactory(2);
+
+    board.placeShip(ship, 0, 0, true);
+    expect(board.receiveAttack(0,0)).toBe(true);
+    expect(board.receiveAttack(1,0)).toBe(true);
+   
+    expect(ship.damage).toBe(2);
+    expect(ship.isSunk()).toBe(true);
+})
+
+// test checkGameOver 
+test("Test checkGameOver returns false when a ship is not sunk", () => {
+    const board = gameboard();
+    const ship = shipFactory(2);
+
+    board.placeShip(ship, 0, 0, true);
+    expect(board.checkGameOver()).toBe(false);
+})
+
+test("Test checkGameOver returns true when all ships are sunk", () => {
+    const board = gameboard();
+    const ship = shipFactory(2);
+    const ship2 = shipFactory(2);
+
+    board.placeShip(ship, 0, 0, true);
+    board.placeShip(ship2, 2, 2, true);
+
+    board.receiveAttack(0,0);
+    board.receiveAttack(1,0);
+    board.receiveAttack(2,2);
+    board.receiveAttack(3,2);
+    
+    expect(board.checkGameOver()).toBe(true);
 })
