@@ -1,28 +1,38 @@
-const SIZE = 7;
+const gameboard = (size = 7) => {
+    const board = new Array(size).fill(new Array(size));
 
-const gameboard = () => {
-    const board = new Array(SIZE).fill(new Array(SIZE));
-    console.log(board.length);
-    const placeShip = (ship, row, col, isVertical) => {
-        const length = ship.length;
+    function isValidPlacement (ship, row, col, isVertical) {
+        // check bounds
+        if (col < 0 || col > size - 1) return false;
+        if (row < 0 || row > size - 1) return false;
         if (isVertical) {
-            // implement
+            if (row + ship.length > size) return false;
+        } 
+        else if (col + ship.length > size) return false;
+        // check if any of the cells are occupied
+        if (isVertical) {
+            for (let i = 0; i < ship.length; i += 1) {
+                if (board[row+i][col]) return false;
+            }
         } else {
-            for (let i = 0; i < length; i += 1) {
-                board[row + i][col] = ship;
+            for (let i = 0; i < ship.length; i += 1) {
+                if (board[row][col+i]) return false;
             }
         }
         return true;
     }
-    const isValidPlacementVertical = (ship, row, col) => {
-        if (col < 0 || col > SIZE - 1) return false;
-        if (row < 0 || row > SIZE - 1) return false;
-        if (board[row][col] === ship) return false;
-
-        // check bounds 
-        if (col + ship.length > SIZE - 1) return false;
-
-
+    function placeShip (ship, row, col, isVertical) {
+        if (!isValidPlacement(ship, row, col, isVertical)) return false;
+        if (isVertical) {
+            for (let i = 0; i < ship.length; i += 1) {
+                board[row+i][col] = ship;
+            }
+        } else {
+            for (let i = 0; i < ship.length; i += 1) {
+                board[row][col+i] = ship;
+            }
+        }
+        return true;
     }
     return {
         board,
