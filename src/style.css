@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+
+.left-gameboard {
+    flex: 1 1 auto;
+    display: flex;
+    width: 10rem;
+    height: 10rem;
+    flex-wrap: wrap;
+    border: 3px solid black;
+}
+
+.board-cell {
+    border: 1px solid red;
+    flex: 1 0 auto;
+}
+
+.ship {
+    background-color: aquamarine;
+}
+
+.miss {
+    background-color: pink;
+}
