@@ -1,16 +1,10 @@
 import gameboard from "./modules/gameboard";
 import player from "./modules/player";
 import shipFactory from "./modules/shipFactory";
+import manipulateDom from "./modules/manipulateDom";
 import "./style.css";
 
-function createCell(size) {
-  const pixel = document.createElement("div");
-  pixel.style.width = `${100 / size}%`;
-  pixel.style.height = `${100 / size}%`;
-  pixel.classList.add("board-cell");
-  return pixel;
-}
-
+const DM = manipulateDom();
 const player1 = player();
 const leftGB = gameboard();
 const domLeftGB = document.querySelector(".left-gameboard");
@@ -19,47 +13,8 @@ const player2 = player();
 const rightGB = gameboard();
 const domRightGB = document.querySelector(".right-gameboard");
 
-function createBoard(element, board) {
-  for (let i = 0; i < board.board.length; i += 1) {
-    const row = board.board[i];
-    for (let j = 0; j < row.length; j += 1) {
-      const cell = createCell(row.length);
-      cell.dataset.row = i;
-      cell.dataset.col = j;
-      element.appendChild(cell);
-    }
-  }
-}
-
-function domReceiveAttack(board, pixel, row, col) {
-    if (board.receiveAttack(row, col)) {
-        if (board.board[row][col]) {
-          const ship = board.board[row][col];
-          console.log(
-            `ship present at: row: ${row} col: ${col}`
-          );
-          pixel.classList.add("ship");
-          if (ship.isSunk()) {
-            console.log("ship sunk");
-          }
-        } else {
-          pixel.classList.add("miss");
-        }
-      } else {
-        console.log("attack did not succeed");
-        return false;
-      }
-    
-      // check for game over
-      if (board.checkGameOver()) {
-        alert('game over');
-      }
-}
-
 function cellClick(e) {
-    // get the parent gameboard element
-    // technically you should only click the right gameboard... 
-
+    // TODO: CHANGE TO ONLY LET CLICK RIGHT SIDE 
     let parentBoard;
     if (e.path[1] === domLeftGB) {
         parentBoard = leftGB;
@@ -69,8 +24,8 @@ function cellClick(e) {
     const pixel = e.target;  
     const { row } = pixel.dataset;
     const { col } = pixel.dataset;
-    domReceiveAttack(parentBoard, pixel, row, col);
-  }
+    DM.domReceiveAttack(parentBoard, pixel, row, col);
+}
 
 function addEventListeners() {
   const pixels = document.querySelectorAll(".board-cell");
@@ -115,15 +70,15 @@ function domAI(player, board) {
     while (attackSuccess === false) {
         const [row, col] = player.randomMove();
         const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
-        attackSuccess = domReceiveAttack(board, targetPixel[0], row, col);
+        attackSuccess = DM.domReceiveAttack(board, targetPixel[0], row, col);
     };
 }
 
 const testButton = document.querySelector('button');
 testButton.addEventListener('click', () => domAI(player2, leftGB))
 
-createBoard(domLeftGB, leftGB);
-createBoard(domRightGB, rightGB);
+DM.createBoard(domLeftGB, leftGB);
+DM.createBoard(domRightGB, rightGB);
 addEventListeners();
 populateShipsRandomly(leftGB);
 populateShipsRandomly(rightGB);
