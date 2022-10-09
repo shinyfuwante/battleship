@@ -11,12 +11,13 @@ function createCell(size) {
   return pixel;
 }
 
+const player1 = player();
 const leftGB = gameboard();
 const domLeftGB = document.querySelector(".left-gameboard");
 
+const player2 = player();
 const rightGB = gameboard();
 const domRightGB = document.querySelector(".right-gameboard");
-// task: focus on trying to interact with the board (one board for now)
 
 function createBoard(element, board) {
   for (let i = 0; i < board.board.length; i += 1) {
@@ -104,12 +105,26 @@ function populateShipsRandomly(board) {
     console.log(`row: ${randX}, col: ${randY}`);
   });
 }
+
+function domAI(player, board) {
+    const domBoard = board === leftGB ? domLeftGB : domRightGB;
+    const [row, col] = player.randomMove();
+    const pixelList = Array.from(domBoard.childNodes);
+    // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
+    const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
+    // attack the target pixel
+    domReceiveAttack(board, targetPixel[0], row, col);
+}
+
+const testButton = document.querySelector('button');
+testButton.addEventListener('click', () => domAI(player2, leftGB))
+
 createBoard(domLeftGB, leftGB);
 createBoard(domRightGB, rightGB);
 addEventListeners();
 populateShipsRandomly(leftGB);
 populateShipsRandomly(rightGB);
-// now that clicking the board "fires", create both game boards 
-// once both boards created, change left board to show where the ships are
-// interact with the right board to "fire"
+
+// implement basic "ai" (just random shots);
+
 // flex task: show what the opponent sees
