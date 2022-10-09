@@ -47,6 +47,7 @@ function domReceiveAttack(board, pixel, row, col) {
         }
       } else {
         console.log("attack did not succeed");
+        return false;
       }
     
       // check for game over
@@ -108,12 +109,14 @@ function populateShipsRandomly(board) {
 
 function domAI(player, board) {
     const domBoard = board === leftGB ? domLeftGB : domRightGB;
-    const [row, col] = player.randomMove();
     const pixelList = Array.from(domBoard.childNodes);
     // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
-    const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
-    // attack the target pixel
-    domReceiveAttack(board, targetPixel[0], row, col);
+    let attackSuccess = false;
+    while (attackSuccess === false) {
+        const [row, col] = player.randomMove();
+        const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
+        attackSuccess = domReceiveAttack(board, targetPixel[0], row, col);
+    };
 }
 
 const testButton = document.querySelector('button');
