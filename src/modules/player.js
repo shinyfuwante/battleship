@@ -1,5 +1,5 @@
 const player = (boardSize = 7) => {
-    const randomMove = (gameboard) => {
+    const randomMove = () => {
         let rowTarget = Math.floor(Math.random() * boardSize);
         let colTarget = Math.floor(Math.random() * boardSize);
 
