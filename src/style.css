@@ -2,7 +2,21 @@
     box-sizing: border-box;
 }
 
+.game-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
 .left-gameboard {
+    flex: 1 1 auto;
+    display: flex;
+    width: 10rem;
+    height: 10rem;
+    flex-wrap: wrap;
+    border: 3px solid black;
+}
+
+.right-gameboard {
     flex: 1 1 auto;
     display: flex;
     width: 10rem;

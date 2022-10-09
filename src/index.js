@@ -13,6 +13,9 @@ function createCell(size) {
 
 const leftGB = gameboard();
 const domLeftGB = document.querySelector(".left-gameboard");
+
+const rightGB = gameboard();
+const domRightGB = document.querySelector(".right-gameboard");
 // task: focus on trying to interact with the board (one board for now)
 
 function createBoard(element, board) {
@@ -27,46 +30,55 @@ function createBoard(element, board) {
   }
 }
 
+function domReceiveAttack(board, pixel, row, col) {
+    if (board.receiveAttack(row, col)) {
+        if (board.board[row][col]) {
+          const ship = board.board[row][col];
+          console.log(
+            `ship present at: row: ${row} col: ${col}`
+          );
+          pixel.classList.add("ship");
+          if (ship.isSunk()) {
+            console.log("ship sunk");
+          }
+        } else {
+          pixel.classList.add("miss");
+        }
+      } else {
+        console.log("attack did not succeed");
+      }
+    
+      // check for game over
+      if (board.checkGameOver()) {
+        alert('game over');
+      }
+}
+
 function cellClick(e) {
     // get the parent gameboard element
     // technically you should only click the right gameboard... 
 
-    let gameboard;
+    let parentBoard;
     if (e.path[1] === domLeftGB) {
-        gameboard = leftGB;
+        parentBoard = leftGB;
     } else {
-        // gameboard = rightGB;
+        parentBoard = rightGB;
     }
     const pixel = e.target;  
     const { row } = pixel.dataset;
     const { col } = pixel.dataset;
-    if (gameboard.receiveAttack(row, col)) {
-      if (gameboard.board[row][col]) {
-        const ship = gameboard.board[row][col];
-        console.log(
-          `ship present at: row: ${pixel.dataset.row} col: ${pixel.dataset.col}`
-        );
-        pixel.classList.add("ship");
-        if (ship.isSunk()) {
-          console.log("ship sunk");
-        }
-      } else {
-        pixel.classList.add("miss");
-      }
-    } else {
-      console.log("attack did not succeed");
-    }
+    domReceiveAttack(parentBoard, pixel, row, col);
   }
 
 function addEventListeners() {
-  const pixels = document.querySelectorAll(".left-gameboard .board-cell");
+  const pixels = document.querySelectorAll(".board-cell");
   pixels.forEach((pixel) => {
     pixel.addEventListener("click", cellClick);
   });
 }
 
 // helper function to populate ships random
-function populateShipsRandomly(element, board) {
+function populateShipsRandomly(board) {
   const ships = [
     shipFactory(2),
     shipFactory(3),
@@ -93,8 +105,10 @@ function populateShipsRandomly(element, board) {
   });
 }
 createBoard(domLeftGB, leftGB);
+createBoard(domRightGB, rightGB);
 addEventListeners();
-populateShipsRandomly(domLeftGB, leftGB);
+populateShipsRandomly(leftGB);
+populateShipsRandomly(rightGB);
 // now that clicking the board "fires", create both game boards 
 // once both boards created, change left board to show where the ships are
 // interact with the right board to "fire"
