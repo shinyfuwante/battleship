@@ -80,12 +80,19 @@ const gameboard = (size = 7) => {
       console.log(`row: ${randX}, col: ${randY}`);
     });
   }
+  const randomMove = () => {
+    const rowTarget = Math.floor(Math.random() * size);
+    const colTarget = Math.floor(Math.random() * size);
+
+    return [rowTarget, colTarget];
+  };
   return {
     board,
     placeShip,
     receiveAttack,
     checkGameOver,
-    populateShipsRandomly
+    populateShipsRandomly,
+    randomMove
   };
 };
 
