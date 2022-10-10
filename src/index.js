@@ -12,14 +12,18 @@ const rightGB = gameboard();
 const domRightGB = document.querySelector(".right-gameboard");
 const DM = manipulateDom(leftGB, rightGB);
 
+
 DM.createBoard(domLeftGB, leftGB);
 DM.createBoard(domRightGB, rightGB);
 
+// task: show location of own ships
+// allow placement manual placement of ships
+
 leftGB.populateShipsRandomly();
+DM.showBoard(domLeftGB, leftGB);
 rightGB.populateShipsRandomly();
 
+// game starts here
 DM.addEventListeners();
 
-// game loop
 
-// flex task: show what the opponent sees
