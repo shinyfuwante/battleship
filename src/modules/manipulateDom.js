@@ -1,5 +1,5 @@
 const domLeftGB = document.querySelector(".left-gameboard");
-const domRightGb = document.querySelector(".right-gameboard");
+const domRightGB = document.querySelector(".right-gameboard");
 
 const manipulateDom = (playerBoard, playerBoard2) => {
   function createCell(size) {
@@ -60,16 +60,28 @@ const manipulateDom = (playerBoard, playerBoard2) => {
 }
 
 function addEventListeners() {
-  const pixels = document.querySelectorAll(".board-cell");
+  const pixels = document.querySelectorAll(".right-gameboard .board-cell");
   pixels.forEach((pixel) => {
     pixel.addEventListener("click", cellClick);
   });
+}
+function domAI(player, board) {
+  const domBoard = board === playerBoard ? domLeftGB : domRightGB;
+  const pixelList = Array.from(domBoard.childNodes);
+  // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
+  let attackSuccess = false;
+  while (attackSuccess === false) {
+      const [row, col] = player.randomMove();
+      const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
+      attackSuccess = domReceiveAttack(board, targetPixel[0], row, col);
+  };
 }
   return {
     createCell,
     createBoard,
     domReceiveAttack,
     addEventListeners,
+    domAI
   }
 };
 
