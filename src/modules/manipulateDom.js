@@ -21,7 +21,6 @@ const manipulateDom = (playerBoard, playerBoard2) => {
       }
     }
   }
-
   function domReceiveAttack(board, pixel, row, col) {
     if (board.receiveAttack(row, col)) {
       if (board.board[row][col]) {
@@ -45,8 +44,24 @@ const manipulateDom = (playerBoard, playerBoard2) => {
     }
     return true;
   }
+  function domAI() {
+    const domBoard = domLeftGB;
+    const pixelList = Array.from(domBoard.childNodes);
+    // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
+    let attackSuccess = false;
+    while (attackSuccess === false) {
+        const [row, col] = playerBoard.randomMove();
+        const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
+        attackSuccess = domReceiveAttack(playerBoard, targetPixel[0], row, col);
+    };
+  }
+  function processClick(board, pixel, row, col) {
+    // player turn
+    domReceiveAttack(board, pixel, row, col);
+    // ai turn
+    domAI();
+  }
   function cellClick(e) {
-    // TODO: CHANGE TO ONLY LET CLICK RIGHT SIDE 
     let parentBoard;
     if (e.path[1] === domLeftGB) {
         parentBoard = playerBoard;
@@ -56,7 +71,8 @@ const manipulateDom = (playerBoard, playerBoard2) => {
     const pixel = e.target;  
     const { row } = pixel.dataset;
     const { col } = pixel.dataset;
-    domReceiveAttack(parentBoard, pixel, row, col);
+    // domReceiveAttack(parentBoard, pixel, row, col);
+    processClick(parentBoard, pixel, row, col);
 }
 
 function addEventListeners() {
@@ -65,17 +81,7 @@ function addEventListeners() {
     pixel.addEventListener("click", cellClick);
   });
 }
-function domAI(player, board) {
-  const domBoard = board === playerBoard ? domLeftGB : domRightGB;
-  const pixelList = Array.from(domBoard.childNodes);
-  // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
-  let attackSuccess = false;
-  while (attackSuccess === false) {
-      const [row, col] = player.randomMove();
-      const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
-      attackSuccess = domReceiveAttack(board, targetPixel[0], row, col);
-  };
-}
+
   return {
     createCell,
     createBoard,
