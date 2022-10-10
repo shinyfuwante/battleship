@@ -1,6 +1,5 @@
 import gameboard from "./modules/gameboard";
 import player from "./modules/player";
-import shipFactory from "./modules/shipFactory";
 import manipulateDom from "./modules/manipulateDom";
 import "./style.css";
 
@@ -34,34 +33,6 @@ function addEventListeners() {
   });
 }
 
-// helper function to populate ships random
-function populateShipsRandomly(board) {
-  const ships = [
-    shipFactory(2),
-    shipFactory(3),
-    shipFactory(3),
-    shipFactory(4),
-    shipFactory(5),
-  ];
-  const coords = [
-    [0, 0],
-    [5, 0],
-    [4, 5],
-    [4, 0],
-    [0, 2],
-  ];
-  ships.forEach((ship) => {
-    let randX = Math.floor(Math.random() * board.board[0].length);
-    let randY = Math.floor(Math.random() * board.board[0].length);
-    const isVertical = Math.floor(Math.random() * 2);
-    while (!board.placeShip(ship, randX, randY, isVertical)) {
-      randX = Math.floor(Math.random() * board.board[0].length);
-      randY = Math.floor(Math.random() * board.board[0].length);
-    }
-    console.log(`row: ${randX}, col: ${randY}`);
-  });
-}
-
 function domAI(player, board) {
     const domBoard = board === leftGB ? domLeftGB : domRightGB;
     const pixelList = Array.from(domBoard.childNodes);
@@ -80,8 +51,8 @@ testButton.addEventListener('click', () => domAI(player2, leftGB))
 DM.createBoard(domLeftGB, leftGB);
 DM.createBoard(domRightGB, rightGB);
 addEventListeners();
-populateShipsRandomly(leftGB);
-populateShipsRandomly(rightGB);
+leftGB.populateShipsRandomly();
+rightGB.populateShipsRandomly();
 
 // implement basic "ai" (just random shots);
 
