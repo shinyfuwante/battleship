@@ -1,4 +1,7 @@
-const manipulateDom = () => {
+const domLeftGB = document.querySelector(".left-gameboard");
+const domRightGb = document.querySelector(".right-gameboard");
+
+const manipulateDom = (playerBoard, playerBoard2) => {
   function createCell(size) {
     const pixel = document.createElement("div");
     pixel.style.width = `${100 / size}%`;
@@ -42,10 +45,31 @@ const manipulateDom = () => {
     }
     return true;
   }
+  function cellClick(e) {
+    // TODO: CHANGE TO ONLY LET CLICK RIGHT SIDE 
+    let parentBoard;
+    if (e.path[1] === domLeftGB) {
+        parentBoard = playerBoard;
+    } else {
+        parentBoard = playerBoard2;
+    }
+    const pixel = e.target;  
+    const { row } = pixel.dataset;
+    const { col } = pixel.dataset;
+    domReceiveAttack(parentBoard, pixel, row, col);
+}
+
+function addEventListeners() {
+  const pixels = document.querySelectorAll(".board-cell");
+  pixels.forEach((pixel) => {
+    pixel.addEventListener("click", cellClick);
+  });
+}
   return {
     createCell,
     createBoard,
     domReceiveAttack,
+    addEventListeners,
   }
 };
 
