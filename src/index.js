@@ -12,9 +12,6 @@ const rightGB = gameboard();
 const domRightGB = document.querySelector(".right-gameboard");
 const DM = manipulateDom(leftGB, rightGB);
 
-const testButton = document.querySelector('button');
-testButton.addEventListener('click', () => manipulateDom.domAI(player2, leftGB))
-
 DM.createBoard(domLeftGB, leftGB);
 DM.createBoard(domRightGB, rightGB);
 
@@ -23,6 +20,6 @@ rightGB.populateShipsRandomly();
 
 DM.addEventListeners();
 
-// implement basic "ai" (just random shots);
+// game loop
 
 // flex task: show what the opponent sees
