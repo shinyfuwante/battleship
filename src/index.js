@@ -3,7 +3,6 @@ import player from "./modules/player";
 import manipulateDom from "./modules/manipulateDom";
 import "./style.css";
 
-const DM = manipulateDom();
 const player1 = player();
 const leftGB = gameboard();
 const domLeftGB = document.querySelector(".left-gameboard");
@@ -11,27 +10,7 @@ const domLeftGB = document.querySelector(".left-gameboard");
 const player2 = player();
 const rightGB = gameboard();
 const domRightGB = document.querySelector(".right-gameboard");
-
-function cellClick(e) {
-    // TODO: CHANGE TO ONLY LET CLICK RIGHT SIDE 
-    let parentBoard;
-    if (e.path[1] === domLeftGB) {
-        parentBoard = leftGB;
-    } else {
-        parentBoard = rightGB;
-    }
-    const pixel = e.target;  
-    const { row } = pixel.dataset;
-    const { col } = pixel.dataset;
-    DM.domReceiveAttack(parentBoard, pixel, row, col);
-}
-
-function addEventListeners() {
-  const pixels = document.querySelectorAll(".board-cell");
-  pixels.forEach((pixel) => {
-    pixel.addEventListener("click", cellClick);
-  });
-}
+const DM = manipulateDom(leftGB, rightGB);
 
 function domAI(player, board) {
     const domBoard = board === leftGB ? domLeftGB : domRightGB;
@@ -50,7 +29,7 @@ testButton.addEventListener('click', () => domAI(player2, leftGB))
 
 DM.createBoard(domLeftGB, leftGB);
 DM.createBoard(domRightGB, rightGB);
-addEventListeners();
+DM.addEventListeners();
 leftGB.populateShipsRandomly();
 rightGB.populateShipsRandomly();
 
