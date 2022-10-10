@@ -23,6 +23,7 @@
     height: 10rem;
     flex-wrap: wrap;
     border: 3px solid black;
+    cursor: crosshair;
 }
 
 .board-cell {
