@@ -31,10 +31,15 @@
     flex: 1 0 auto;
 }
 
+.playership {
+    background-color: aqua;
+}
 .ship {
     background-color: aquamarine;
 }
-
+.playership.ship {
+    background-color: black;
+}
 .miss {
     background-color: pink;
 }

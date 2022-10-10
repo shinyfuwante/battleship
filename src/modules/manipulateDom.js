@@ -21,6 +21,26 @@ const manipulateDom = (playerBoard, playerBoard2) => {
       }
     }
   }
+
+  function showBoard(element, board) {
+    // get location of all ships on board
+    const pixelList = Array.from(domLeftGB.childNodes);
+    for (let i = 0; i < board.board.length; i += 1) {
+      const row = board.board[i];
+      for (let j = 0; j < row.length; j += 1) {
+        const cell = board.board[i][j];
+        if (cell) {
+          const targetPixel = pixelList.filter(
+            (pixel) =>
+              parseInt(pixel.dataset.row, 10) === i &&
+              parseInt(pixel.dataset.col, 10) === j
+          );
+          targetPixel[0].classList.add("playership");
+        }
+      }
+    }
+  }
+
   function domReceiveAttack(board, pixel, row, col) {
     if (board.receiveAttack(row, col)) {
       if (board.board[row][col]) {
@@ -44,17 +64,23 @@ const manipulateDom = (playerBoard, playerBoard2) => {
     }
     return true;
   }
+
   function domAI() {
     const domBoard = domLeftGB;
     const pixelList = Array.from(domBoard.childNodes);
     // need to parseInt because dataset.row is a string. Add a radix of 10 for decimal numbers.
     let attackSuccess = false;
     while (attackSuccess === false) {
-        const [row, col] = playerBoard.randomMove();
-        const targetPixel = pixelList.filter((pixel) => parseInt(pixel.dataset.row, 10) === row && parseInt(pixel.dataset.col, 10) === col);
-        attackSuccess = domReceiveAttack(playerBoard, targetPixel[0], row, col);
-    };
+      const [row, col] = playerBoard.randomMove();
+      const targetPixel = pixelList.filter(
+        (pixel) =>
+          parseInt(pixel.dataset.row, 10) === row &&
+          parseInt(pixel.dataset.col, 10) === col
+      );
+      attackSuccess = domReceiveAttack(playerBoard, targetPixel[0], row, col);
+    }
   }
+
   function processClick(board, pixel, row, col) {
     // player turn
     domReceiveAttack(board, pixel, row, col);
@@ -64,31 +90,32 @@ const manipulateDom = (playerBoard, playerBoard2) => {
   function cellClick(e) {
     let parentBoard;
     if (e.path[1] === domLeftGB) {
-        parentBoard = playerBoard;
+      parentBoard = playerBoard;
     } else {
-        parentBoard = playerBoard2;
+      parentBoard = playerBoard2;
     }
-    const pixel = e.target;  
+    const pixel = e.target;
     const { row } = pixel.dataset;
     const { col } = pixel.dataset;
     // domReceiveAttack(parentBoard, pixel, row, col);
     processClick(parentBoard, pixel, row, col);
-}
+  }
 
-function addEventListeners() {
-  const pixels = document.querySelectorAll(".right-gameboard .board-cell");
-  pixels.forEach((pixel) => {
-    pixel.addEventListener("click", cellClick);
-  });
-}
+  function addEventListeners() {
+    const pixels = document.querySelectorAll(".right-gameboard .board-cell");
+    pixels.forEach((pixel) => {
+      pixel.addEventListener("click", cellClick);
+    });
+  }
 
   return {
     createCell,
     createBoard,
     domReceiveAttack,
     addEventListeners,
-    domAI
-  }
+    domAI,
+    showBoard
+  };
 };
 
 export default manipulateDom;
