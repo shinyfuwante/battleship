@@ -1,5 +1,5 @@
 const domLeftGB = document.querySelector(".left-gameboard");
-const domRightGB = document.querySelector(".right-gameboard");
+const logBox = document.querySelector(".logs");
 
 const manipulateDom = (playerBoard, playerBoard2) => {
   function createCell(size) {
@@ -42,13 +42,20 @@ const manipulateDom = (playerBoard, playerBoard2) => {
   }
 
   function domReceiveAttack(board, pixel, row, col) {
+    // stop attacking if game is over
+    // hack fix
+    if (board.checkGameOver()) return false;
     if (board.receiveAttack(row, col)) {
       if (board.board[row][col]) {
         const ship = board.board[row][col];
         console.log(`ship present at: row: ${row} col: ${col}`);
         pixel.classList.add("ship");
         if (ship.isSunk()) {
-          console.log("ship sunk");
+          if (board === playerBoard2) {
+            logBox.innerText += `You've sunk an enemy ship of length ${ship.length}\n`;
+          } else {
+            logBox.innerText += `Your ship with length ${ship.length} has been sunk\n`;
+          }
         }
       } else {
         pixel.classList.add("miss");
@@ -60,7 +67,8 @@ const manipulateDom = (playerBoard, playerBoard2) => {
 
     // check for game over
     if (board.checkGameOver()) {
-      alert("game over");
+      logBox.innerText += `Game over! \n`;
+      return false;
     }
     return true;
   }
@@ -83,7 +91,7 @@ const manipulateDom = (playerBoard, playerBoard2) => {
 
   function processClick(board, pixel, row, col) {
     // player turn
-    domReceiveAttack(board, pixel, row, col);
+    if (domReceiveAttack(board, pixel, row, col))
     // ai turn
     domAI();
   }
